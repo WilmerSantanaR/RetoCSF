@@ -32,4 +32,7 @@ public class User {
     private Integer roleId; // El rol del usuario (0 para cliente, 1 para superadmin, 2 para admin, etc.)
 
 
+    public void setId(Long userId) {
+        this.userId = userId;
+    }
 }
