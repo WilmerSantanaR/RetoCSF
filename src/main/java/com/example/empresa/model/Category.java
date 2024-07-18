@@ -1,25 +1,25 @@
 package com.example.empresa.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.List;
 
-@Setter
-@Getter
+import java.util.Set;
+
 @Entity
-@Table(name = "categories")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
     private Long id;
 
-    @Column(name = "name", nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<Product> products;
+    private Set<Product> product;
 }

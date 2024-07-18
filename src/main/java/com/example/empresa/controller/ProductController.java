@@ -5,7 +5,6 @@ import com.example.empresa.services.ProductService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/product")
 public class ProductController {
 
     @Autowired
@@ -21,47 +20,42 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody ProductRequest productRequest) {
-        try {
-            Product createdProduct = productService.createProduct(
-                    productRequest.getName(),
-                    productRequest.getDescription(),
-                    productRequest.getPrice(),
-                    productRequest.getStock(),
-                    productRequest.getCategoryId()
-            );
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        Product product = productService.createProduct(
+                productRequest.getName(),
+                productRequest.getDescription(),
+                productRequest.getPrice(),
+                productRequest.getStock(),
+                productRequest.getCategoryId()
+        );
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        return ResponseEntity.ok(productService.getAllProducts());
+        List<Product> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<Optional<Product>> getProductById(@PathVariable Long id) {
         Optional<Product> product = productService.getProductById(id);
-        return product.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+        return ResponseEntity.ok(product);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
-        try {
-            Product updatedProduct = productService.updateProduct(
-                    id,
-                    productRequest.getName(),
-                    productRequest.getDescription(),
-                    productRequest.getPrice(),
-                    productRequest.getStock(),
-                    productRequest.getCategoryId()
-            );
-            return ResponseEntity.ok(updatedProduct);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductRequest productRequest
+    ) {
+        Product product = productService.updateProduct(
+                id,
+                productRequest.getName(),
+                productRequest.getDescription(),
+                productRequest.getPrice(),
+                productRequest.getStock(),
+                productRequest.getCategoryId()
+        );
+        return ResponseEntity.ok(product);
     }
 
     @DeleteMapping("/{id}")
@@ -70,15 +64,15 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @Setter
     @Getter
+    @Setter
     public static class ProductRequest {
+
         private String name;
         private String description;
         private Double price;
         private int stock;
         private Long categoryId;
-
 
     }
 }

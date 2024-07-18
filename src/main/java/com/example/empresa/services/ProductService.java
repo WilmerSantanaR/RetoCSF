@@ -1,9 +1,11 @@
 package com.example.empresa.services;
 
-import com.example.empresa.model.Product;
+
+import com.example.empresa.exceptions.CategoryNotFoundException;
 import com.example.empresa.model.Category;
-import com.example.empresa.repository.ProductRepository;
+import com.example.empresa.model.Product;
 import com.example.empresa.repository.CategoryRepository;
+import com.example.empresa.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,19 +22,10 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     public Product createProduct(String name, String description, Double price, int stock, Long categoryId) {
-        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
-        if (categoryOptional.isPresent()) {
-            Category category = categoryOptional.get();
-            Product product = new Product();
-            product.setName(name);
-            product.setDescription(description);
-            product.setPrice(price);
-            product.setStock(stock);
-            product.setCategory(category);
-            return productRepository.save(product);
-        } else {
-            throw new RuntimeException("Category not found");
-        }
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("Category with ID " + categoryId + " not found"));
+        Product product = new Product(name, description, price, stock, category);
+        return productRepository.save(product);
     }
 
     public List<Product> getAllProducts() {
@@ -44,24 +37,18 @@ public class ProductService {
     }
 
     public Product updateProduct(Long id, String name, String description, Double price, int stock, Long categoryId) {
-        Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            product.setName(name);
-            product.setDescription(description);
-            product.setPrice(price);
-            product.setStock(stock);
-            Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
-            if (categoryOptional.isPresent()) {
-                Category category = categoryOptional.get();
-                product.setCategory(category);
-                return productRepository.save(product);
-            } else {
-                throw new RuntimeException("Category not found");
-            }
-        } else {
-            throw new RuntimeException("Product not found");
-        }
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("Category with ID " + categoryId + " not found"));
+
+        product.setName(name);
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setStock(stock);
+        product.setCategory(category);
+
+        return productRepository.save(product);
     }
 
     public void deleteProduct(Long id) {
