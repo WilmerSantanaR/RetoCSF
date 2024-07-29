@@ -19,17 +19,19 @@ public class Product {
     private String description;
     private Double price;
     private int stock;
+    private String imageUrl; // Nuevo campo para la URL de la imagen
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
     // Constructor que acepta un objeto Category
-    public Product(String name, String description, Double price, int stock, Category category) {
+    public Product(String name, String description, Double price, int stock, Category category, String imageUrl) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.stock = stock;
         this.category = category;
+        this.imageUrl = imageUrl; // Inicializar el campo imageUrl
     }
 }

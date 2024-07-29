@@ -25,7 +25,8 @@ public class ProductController {
                 productRequest.getDescription(),
                 productRequest.getPrice(),
                 productRequest.getStock(),
-                productRequest.getCategoryId()
+                productRequest.getCategoryId(),
+                productRequest.getImageUrl()  // Añadir imageUrl
         );
         return ResponseEntity.ok(product);
     }
@@ -53,7 +54,8 @@ public class ProductController {
                 productRequest.getDescription(),
                 productRequest.getPrice(),
                 productRequest.getStock(),
-                productRequest.getCategoryId()
+                productRequest.getCategoryId(),
+                productRequest.getImageUrl()  // Añadir imageUrl
         );
         return ResponseEntity.ok(product);
     }
@@ -73,6 +75,7 @@ public class ProductController {
         private Double price;
         private int stock;
         private Long categoryId;
+        private String imageUrl;  // Añadir imageUrl
 
     }
 }
